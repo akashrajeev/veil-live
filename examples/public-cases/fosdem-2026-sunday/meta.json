@@ -1,0 +1,20 @@
+{
+ "conversion": {
+  "all_day_events_in_range": 0,
+  "busy_intervals_in_range": 1,
+  "calendar_id": "fosdem-2026-schedule",
+  "coverage": {
+   "end": "2026-02-02T00:00:00+01:00",
+   "start": "2026-02-01T00:00:00+01:00"
+  },
+  "feed_timezone": "Europe/Brussels",
+  "skipped_malformed_events": 0,
+  "skipped_recurring_events": 0,
+  "total_vevents": 1079
+ },
+ "description": "FOSDEM 2026 real conference schedule, Sunday Feb 1 (1079 timed events over the weekend, floating times in Europe/Brussels)",
+ "fetched": "2026-10-16",
+ "license_note": "public schedule feed, factual timing data",
+ "name": "fosdem-2026-sunday",
+ "source_url": "https://fosdem.org/2026/schedule/ical"
+}
