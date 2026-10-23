@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Veil - real public calendar cases</title>
+<style>
+body{background:#0d1117;color:#e6edf3;font-family:system-ui,sans-serif;max-width:880px;margin:0 auto;padding:24px}
+h1{font-size:1.4rem;margin:0 0 4px}
+.tag{color:#8b949e;font-size:.85rem}
+.banner{border:1px solid #9e6a03;background:#1c1503;color:#f0b72f;padding:10px 14px;border-radius:8px;margin:14px 0;font-size:.9rem}
+.case{border:1px solid #30363d;border-radius:8px;padding:12px 14px;margin:10px 0;cursor:pointer}
+.case:hover{border-color:#58a6ff}
+.case.sel{border-color:#f78166}
+.case b{color:#58a6ff}
+.case .src{font-size:.78rem;color:#8b949e;word-break:break-all}
+button{background:#21262d;color:#e6edf3;border:1px solid #30363d;border-radius:6px;padding:8px 14px;margin:4px 4px 4px 0;cursor:pointer}
+button:hover{border-color:#58a6ff}
+.prot{border-color:#9e6a03}
+#log{background:#010409;border:1px solid #30363d;border-radius:8px;padding:12px;font-family:ui-monospace,monospace;font-size:.85rem;white-space:pre-wrap;min-height:80px;margin-top:12px}
+.win{font-size:.8rem;color:#8b949e}
+h2{font-size:1.05rem;margin-top:22px}
+a{color:#58a6ff}
+</style>
+</head>
+<body>
+<h1>Veil - real public calendar cases <span class="tag">real data demo</span></h1>
+<div class="tag"><a href="/">&larr; synthetic demo</a> &middot; same joint guard as the MCP SDK lab (<code>calendar_mcp_server.py</code>, transport in MCP.md)</div>
+<div class="banner"><b>Honest scope.</b> Inputs below are <b>real public schedule feeds</b> (conference, sports, public holidays) reduced to busy/free timing only - no titles, places or people, and no private calendar. The guard's counterfactual worlds and independent uniform prior remain <b>declared assumptions</b>. This page is not a real-world privacy guarantee, not Alexa+, and not an LLM.</div>
+<h2>1. Pick a real public case</h2>
+<div id="cases">loading...</div>
+<h2>2. Ask the guarded assistant</h2>
+<div class="win" id="wins">Select a case first. Windows 0 and 1 (amber) are jointly protected: the guard answers without the pair of answers jointly revealing the protected availability.</div>
+<div id="btns"></div>
+<div id="log"></div>
+<script>
+let current=null;
+async function api(path,body){let r=await fetch(path,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:undefined);let d=await r.json();if(!r.ok)throw Error(d.error||'request failed');return d;}
+function log(s){document.querySelector('#log').textContent+=s+'\n';}
+async function loadCases(){
+  let d=await api('/api/real/cases');
+  let el=document.querySelector('#cases');el.innerHTML='';
+  for(let c of d.cases){
+    let div=document.createElement('div');div.className='case';div.id='case-'+c.name;
+    div.innerHTML=`<b>${c.name}</b> - ${c.description}<br><span class="src">source: <a href="${c.source_url}">${c.source_url}</a> (fetched ${c.fetched}; ${c.conversion.total_vevents} real events, ${c.conversion.busy_intervals_in_range} merged busy blocks in range)</span>`;
+    div.onclick=()=>select(c.name,div);el.appendChild(div);
+  }
+}
+async function select(name,div){
+  try{
+    let d=await api('/api/real/select',{case:name});
+    current=name;
+    document.querySelectorAll('.case').forEach(x=>x.classList.remove('sel'));div.classList.add('sel');
+    let w=document.querySelector('#wins');
+    w.innerHTML='Public candidate windows (chosen before availability was read):<br>'+d.windows.map(x=>`[${x.index}] ${x.start} &rarr; ${x.end}`).join('<br>')+'<br>Windows 0 and 1 (amber) are jointly protected.';
+    let b=document.querySelector('#btns');b.innerHTML='';
+    d.windows.forEach(x=>{let btn=document.createElement('button');btn.textContent='Ask about window '+x.index;if(x.index<2)btn.className='prot';btn.onclick=()=>ask('slot'+x.index);b.appendChild(btn);});
+    let p=document.createElement('button');p.textContent='Parity check';p.onclick=()=>ask('parity');b.appendChild(p);
+    let s=document.createElement('button');s.textContent='Schedule a meeting';s.onclick=()=>ask('schedule');b.appendChild(s);
+    log('--- selected real case: '+name+' ('+d.source+') ---');
+  }catch(e){log('select failed: '+e.message);}
+}
+async function ask(req){
+  if(!current)return;
+  try{let d=await api('/api/real/ask',{case:current,request:req});log(req+' -> '+d.answer);}
+  catch(e){log(req+' -> refused/error: '+e.message);}
+}
+loadCases().catch(e=>{document.querySelector('#cases').textContent='failed to load cases: '+e.message;});
+</script>
+</body>
+</html>

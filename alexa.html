@@ -1,0 +1,167 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Veil | what the room can work out</title>
+<style>
+:root{--f:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;--bg:#0e0d0b;--ink:#e9e4d8;--mut:#8b8678;--rule:#2b2823;--hot:#ff5a36;--paper:#e9e4d8}
+*{box-sizing:border-box}html{background:var(--bg)}
+body{margin:0;color:var(--ink);font:15px/1.55 var(--f);background:var(--bg)}
+a,button{font:inherit}
+header{display:grid;grid-template-columns:1fr auto;gap:24px;padding:22px 32px 14px;border-bottom:1px solid var(--rule);align-items:end}
+h1{margin:0;font:600 13px/1.3 var(--f);letter-spacing:.22em;text-transform:uppercase}
+header p{margin:6px 0 0;color:var(--mut);max-width:78ch;font-size:12.5px}
+.tag{border:1px solid var(--hot);color:var(--hot);padding:3px 8px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+main{display:grid;grid-template-columns:minmax(340px,5fr) 7fr;min-height:calc(100vh - 92px)}
+@media(max-width:980px){main{grid-template-columns:1fr}}
+.col{padding:22px 32px;min-width:0}.col+.col{border-left:1px solid var(--rule)}
+@media(max-width:980px){.col+.col{border-left:0;border-top:1px solid var(--rule)}}
+h2{margin:0 0 14px;font:600 11px/1 var(--f);letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+#log{min-height:250px;max-height:56vh;overflow:auto;padding-right:6px}
+.ln{display:grid;grid-template-columns:3.2ch 7ch 1fr;gap:0 10px;padding:5px 0;border-bottom:1px dotted var(--rule)}
+.ln .n{color:#5d594f}.ln .who{color:var(--mut)}.ln.veil .who{color:var(--ink)}.ln.no .t{color:var(--hot)}
+.ln .t{overflow-wrap:anywhere}
+.act{margin:2px 0 8px 3.2ch;padding-left:17px}
+.link{background:none;border:0;border-bottom:1px solid var(--mut);color:var(--ink);padding:0;cursor:pointer}
+.link:hover{border-color:var(--ink)}.link:disabled{color:var(--mut);border-color:transparent;cursor:default}
+.sug{margin:16px 0 8px;display:flex;flex-wrap:wrap;gap:6px 18px}
+form{display:flex;gap:10px;align-items:center;border-top:1px solid var(--ink);padding-top:10px;margin-top:6px}
+form span{color:var(--mut)}input{flex:1;min-width:0;background:none;border:0;color:var(--ink);font:inherit;outline:0;padding:6px 0}
+input::placeholder{color:#5d594f}select{background:var(--panel,#181713);color:var(--ink);border:1px solid var(--line,#3a362e);font:inherit;padding:2px 4px}.go{background:var(--paper);color:var(--bg);border:0;padding:6px 12px;font-weight:700;cursor:pointer}
+:focus-visible{outline:2px solid var(--hot);outline-offset:2px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:28px}@media(max-width:620px){.fields{grid-template-columns:1fr}}
+.field h3{margin:0 0 4px;font:600 12px/1.3 var(--f);letter-spacing:.14em;text-transform:uppercase}
+.field.bad h3{color:var(--hot)}
+.big{font:700 44px/1 var(--f);letter-spacing:-.02em;margin:6px 0 2px;font-variant-numeric:tabular-nums}
+.field.bad .big{color:var(--hot)}
+.sub{color:var(--mut);font-size:12px;min-height:3.2em}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:12px 0 8px}
+.cell{aspect-ratio:1.15;border:1px solid var(--rule);display:flex;align-items:flex-end;justify-content:center;gap:5px;padding:7px 4px;transition:opacity .25s,border-color .25s}
+.cell i{display:block;width:6px;background:#57534a}
+.cell i.f{height:100%;background:var(--paper)}.cell i.b{height:22%}
+.cell i.p.f{background:var(--hot)}.cell i.p.b{background:#7a3220}
+.cell.on{border-color:#5d594f}.cell.off{opacity:.14}
+.key{color:var(--mut);font-size:11.5px;margin:2px 0 0}
+.key b{display:inline-block;width:8px;height:8px;background:var(--hot);margin-right:6px}
+.apr{margin-top:24px;border-top:1px solid var(--rule);padding-top:16px}
+.apr .row{padding:8px 0;border-bottom:1px dotted var(--rule)}
+.apr .row button{margin-right:16px}
+.wire{margin-top:24px;border-top:1px solid var(--rule);padding-top:16px}
+.wire pre{margin:0 0 10px;font-size:11.5px;line-height:1.45;color:#b3ad9c;white-space:pre-wrap;overflow-wrap:anywhere;max-height:30vh;overflow:auto}
+.wire .h{color:var(--ink)}
+details.try{margin:6px 0 0;font-size:13px}details.try summary{cursor:pointer;text-decoration:underline}details.try ol{margin:6px 0 0;padding-left:18px}details.try li{margin:4px 0}
+</style>
+<header><div><h1>Veil &middot; simulated assistant</h1>
+<p>A stand-in voice assistant talks to Veil's MCP server (<code>POST /mcp</code>, protocol 2025-11-25). It sees only what the room hears. The right-hand panels are operator instrumentation on a separate token-gated endpoint. Synthetic calendars; no Amazon service or device is involved.</p>
+<details class="try"><summary>Try this in 3 minutes</summary>
+<ol>
+<li>Assumes the default scenario (protected window = early prep); press <b>new simulation</b> first if you changed the selects. Ask <b>is alice free for dinner</b>, then <b>is alice free for early prep</b>. The second is refused: the transcript so far would narrow the protected window. Watch the protected-window bits stay at 0 on the right while the calendar-identity bits move - the room learned something, just not the protected fact.</li>
+<li>Compare the two grids now: the same conversation with Veil still leaves the protected window undetermined; without Veil it is already fully worked out.</li>
+<li>Click <b>ask Alice to approve this (simulated)</b> after the refusal, approve it on the right, and watch the protected-window bits move only now, by exactly the disclosed amount - the window is determined from here because Alice chose to disclose it.</li>
+<li>Rerun with a different calendar, protected window or declared prior from the scenario selects (and restart the script from step 1) - the guarded answers preserve whichever prior you declare.</li>
+<li>Joint protection: pick a <b>second protected window</b> (try late prep), restart, and ask <b>can alice cover exactly one of the two prep windows</b>. It is refused - the answer would expose the JOINT pattern even though each window's own margin would stay 50%. A per-window guard cannot see that; the pattern table on the right shows all four combinations still at their declared prior.</li>
+</ol></details></div><div class="tag">simulated</div></header>
+<main>
+<section class="col"><h2>Living room &mdash; Bob asks about Alice</h2>
+<div id="log" role="log" aria-live="polite"></div>
+<div class="sug" id="sug"></div>
+<form id="f"><span>ask&nbsp;&rsaquo;</span><input id="t" maxlength="240" placeholder="is alice free for early prep" aria-label="Ask the assistant"><button class="go">send</button></form>
+<p class="key"><button class="link" id="reset">new simulation (operator-only control)</button> - starts a NEW SIMULATION: the model treats the room as a fresh observer and excludes the prior conversation. It is not a privacy reset; a real room would still remember what it heard.</p>
+</section>
+<section class="col"><h2>What the room can work out &mdash; operator view</h2>
+<p class="key">scenario (operator only): calendar <select id="cal"></select> protected window <select id="pw"></select> prior <select id="pr"><option value="">1:1 (uniform)</option><option value="1,2">1:2</option><option value="1,3">1:3</option><option value="2,1">2:1</option><option value="3,1">3:1</option></select> second protected window <select id="pw2"><option value="">none (single-window guard)</option></select> its prior <select id="pr2"><option value="">1:1 (uniform)</option><option value="1,2">1:2</option><option value="1,3">1:3</option><option value="2,1">2:1</option><option value="3,1">3:1</option></select> &mdash; applies on &lsquo;new simulation&rsquo;</p>
+<div class="fields">
+ <div class="field"><h3>With Veil</h3><div class="big" id="p">50%</div><div class="sub" id="ps"></div><div class="grid" id="g1"></div></div>
+ <div class="field bad"><h3>Same questions, no guard</h3><div class="big" id="np">50%</div><div class="sub" id="nps"></div><div class="grid" id="g2"></div></div>
+</div>
+<p class="key">Each box is one possible calendar for Alice. Four bars per box: early prep, late prep, dinner, cleanup (tall = free). <b></b>the protected window(s) - one or two, per the scenario selects. Faded boxes are ruled out by what was said.</p>
+<div class="apr"><h2>Alice's private approvals (simulated, in-app)</h2><div id="appr" class="sub">No requests.</div></div>
+<div class="wire"><h2>Wire (assistant surface)</h2><div id="trace"></div></div>
+</section></main>
+<script>
+document.title=document.title;let id=0,n=0,prot=0,prot2=-1;const $=s=>document.getElementById(s);
+const SLOT=['early prep','late prep','dinner','cleanup'];
+async function rpc(method,params,notify,op){const body={jsonrpc:'2.0',method};if(params)body.params=params;if(!notify)body.id=++id;
+ const r=await fetch(op?'/mcp-operator':'/mcp',{method:'POST',headers:{'Content-Type':'application/json','MCP-Protocol-Version':'2025-11-25',...(op?{'X-Veil-Operator':'__OPERATOR_TOKEN__'}:{})},body:JSON.stringify(body)});
+ const txt=await r.text();return txt?JSON.parse(txt):null}
+function line(who,text,cls=''){const d=document.createElement('div');d.className='ln '+cls;d.innerHTML='<span class="n"></span><span class="who"></span><span class="t"></span>';
+ d.children[0].textContent=String(++n).padStart(2,'0');d.children[1].textContent=who;d.children[2].textContent=text;$('log').append(d);$('log').scrollTop=1e9;return d}
+function act(btn,label,fn){const w=document.createElement('div');w.className='act';const b=document.createElement('button');b.className='link';b.textContent=label;b.onclick=()=>{b.disabled=true;fn()};w.append(b);$('log').append(w);$('log').scrollTop=1e9}
+function wire(name,args,res){const d=document.createElement('div');const h=document.createElement('pre');h.className='h';h.textContent='-> tools/call '+name+' '+JSON.stringify(args);
+ const b=document.createElement('pre');b.textContent='<- '+JSON.stringify(res.structuredContent||res);d.append(h,b);$('trace').prepend(d);while($('trace').children.length>8)$('trace').lastChild.remove()}
+async function call(name,args,op){const r=await rpc('tools/call',{name,arguments:args},false,op);if(!op)wire(name,args,r.result);return r.result}
+function grid(el,alive){el.textContent='';const set=new Set(alive);for(let a=0;a<16;a++){const c=document.createElement('div');c.className='cell '+(set.has(a)?'on':'off');
+ for(let k=0;k<4;k++){const i=document.createElement('i');i.className=((a>>k)&1?'f':'b')+((k===prot||k===prot2)?' p':'');c.append(i)}c.title='calendar '+a.toString(2).padStart(4,'0');el.append(c)}}
+function frac(s){const [a,b]=String(s).split('/');return b?(+a)/(+b):+a}
+function summarize(alive,pc,el,sub,probfree,prior){const f=alive.filter(a=>(a>>prot)&1).length,b=alive.length-f;
+ $(pc).textContent=alive.length?Math.round(100*frac(probfree))+'%':'-';$(sub).textContent=alive.length+' of 16 calendars remain. Protected window ('+SLOT[prot]+') free in '+f+', busy in '+b+(f&&b?' - cannot tell.':(alive.length?' - known.':'.'))+((prior&&(prior[0]!==1||prior[1]!==1))?' Declared prior '+prior[0]+':'+prior[1]+' weights the % - calendar counts above are raw, not probabilities.':'')}
+async function decide(i,v){await call('veil_decide_approval',{approval_id:i,approve:v},true);await operator()}
+function jointText(js){return js.map(r=>r.pattern+' '+Math.round(frac(r.fraction)*100)+'%').join('  ')}
+function jointPeak(js){return Math.round(Math.max(...js.map(r=>frac(r.fraction)))*100)+'%'}
+async function operator(){const sc=(await call('veil_operator_view',{},true)).structuredContent;if(!sc||sc.initialized===false)return sc;
+ if(sc.protected_windows){prot=SLOT.indexOf(sc.protected_windows[0]);prot2=sc.protected_windows.length>1?SLOT.indexOf(sc.protected_windows[1]):-1;
+  const ad=sc.after_approved_disclosures;const wv=ad?ad.alive_calendars:sc.with_veil_alive_calendars;
+  grid($('g1'),wv);grid($('g2'),sc.without_veil.alive_calendars);
+  const wjs=ad?ad.joint_support:sc.joint_support;
+  $('p').textContent=jointPeak(wjs);$('ps').textContent=wv.length+' of 16 calendars remain. Protected pattern ('+sc.joint_pattern_column_order.join(', ')+'): '+jointText(wjs)+(wv.length?' - peak cell shown above; uniform prior peaks at 25%.':'.');
+  $('np').textContent=jointPeak(sc.without_veil.joint_support);$('nps').textContent=sc.without_veil.alive_calendars.length+' of 16 calendars remain. Unguarded pattern: '+jointText(sc.without_veil.joint_support);
+  const wb=ad?ad.information_bits:sc.with_veil_information_bits;
+  $('ps').textContent+=' Information gained so far - protected pattern: '+wb.protected_joint_bits+' of '+wb.protected_joint_prior_bits+' bit(s) (joint, not per-window margins); calendar identity: '+wb.calendar_bits+' of '+wb.calendar_prior_bits+' bits.';
+  const nb=sc.without_veil.information_bits;
+  $('nps').textContent+=' Without Veil - protected pattern: '+nb.protected_joint_bits+' of '+nb.protected_joint_prior_bits+' bit(s); calendar identity: '+nb.calendar_bits+' of '+nb.calendar_prior_bits+' bits.';
+  if(ad)$('ps').textContent+=' After a disclosure Alice approved (simulated); direct answers are paused.';
+  demoteLegacy(sc);apprBox(sc,true);return sc}
+ prot2=-1;prot=SLOT.indexOf(sc.protected_window);const ad=sc.after_approved_disclosures;const wv=ad?ad.alive_calendars:sc.with_veil_alive_calendars;
+ grid($('g1'),wv);grid($('g2'),sc.without_veil.alive_calendars);summarize(wv,'p','g1','ps',ad?ad.probability_free:sc.observer_probability_protected_window_free,sc.prior);summarize(sc.without_veil.alive_calendars,'np','g2','nps',sc.without_veil.probability_free,sc.prior);
+ const wb=ad?ad.information_bits:sc.with_veil_information_bits;
+ $('ps').textContent+=' Information gained so far - protected window: '+wb.protected_window_bits+' of '+wb.protected_window_prior_bits+' bit(s); calendar identity: '+wb.calendar_bits+' of '+wb.calendar_prior_bits+' bits.';
+ const nb=sc.without_veil.information_bits;
+ $('nps').textContent+=' Without Veil - protected window: '+nb.protected_window_bits+' of '+nb.protected_window_prior_bits+' bit(s); calendar identity: '+nb.calendar_bits+' of '+nb.calendar_prior_bits+' bits.';
+ if(ad)$('ps').textContent+=' After a disclosure Alice approved (simulated); direct answers are paused.';
+ demoteLegacy(sc);apprBox(sc,false);return sc}
+function demoteLegacy(sc){if(!sc.legacy_approval_history)return;
+ const ledger=$('ps').textContent;
+ $('p').textContent='UNKNOWN';
+ $('ps').textContent='Observer knowledge unknown - approval history was not persisted, so the room may know more than the ledger shows. Recorded ledger alone: '+ledger+' Start a new simulation for a clean readout.';
+ $('nps').textContent='(recorded ledger only) '+$('nps').textContent;}
+function apprBox(sc,joint){const box=$('appr');box.textContent='';const pend=sc.pending_previews||[];
+ if(sc.legacy_approval_history){const w=document.createElement('div');w.className='row';w.style.color='#ffb454';w.textContent='This session predates approval persistence: its approval history is unknown, so answers stay paused until a new simulation or per-answer approval.';box.appendChild(w);}
+ if(!sc.approvals.length&&!sc.legacy_approval_history)box.textContent='No requests.';
+ for(const a of sc.approvals){const d=document.createElement('div');d.className='row';const p=pend.find(x=>x.approval_id===a.approval_id);
+  d.append(document.createTextNode('#'+String(a.approval_id).split('-').pop()+' "'+a.request+'" ['+a.status+']'));
+  if(p){if(joint){d.append(document.createElement('br'),document.createTextNode('if approved the room works out: '+jointText(p.if_approved.joint_support)+', '+p.if_approved.possible_calendars+' calendars left, +'+p.if_approved.information_bits.protected_joint_bits+' of the '+p.if_approved.information_bits.protected_joint_prior_bits+' protected-pattern bit(s)  '))}
+   else{const f=frac(p.if_approved.probability_free);d.append(document.createElement('br'),document.createTextNode('if approved the room works out: '+Math.round(f*100)+'% free, '+p.if_approved.possible_calendars+' calendars left, +'+p.if_approved.information_bits.protected_window_bits+' of the '+p.if_approved.information_bits.protected_window_prior_bits+' protected-window bit(s)  '))}
+   for(const [t,v] of [['approve',true],['decline',false]]){const b=document.createElement('button');b.className='link';b.textContent=t;b.onclick=()=>decide(a.approval_id,v);d.append(b,document.createTextNode(' '))}}
+  box.append(d)}}
+async function poll(i){for(let k=0;k<200;k++){await new Promise(r=>setTimeout(r,1500));const r=await call('veil_check_approval',{approval_id:i});if(r.structuredContent.status!=='pending'){line('veil',r.content[0].text,r.structuredContent.status==='approved'?'veil':'veil no');await operator();return}}}
+async function requestApproval(q){line('bob','(asks Alice to approve) '+q);const r=await call('veil_request_approval',{text:q});line('veil',r.content[0].text,'veil');await operator();if(r.structuredContent.approval_id)poll(r.structuredContent.approval_id)}
+async function ask(q){line('bob',q);const r=await call('veil_ask',{text:q});const s=r.structuredContent||{};const refused=s.output==='REFUSED'||s.supported_request===false;
+ line('veil',r.content[0].text,'veil'+(refused?' no':''));await operator();if(s.output==='REFUSED'&&s.supported_request)act(null,'> ask Alice to approve this (simulated)',()=>requestApproval(q))}
+function startArgs(){if($('pw2').value){if($('pw2').value===$('pw').value)return null;
+  const args={protected_windows:[$('pw').value,$('pw2').value],alice_calendar:+$('cal').value};
+  const p1=$('pr').value?$('pr').value.split(',').map(Number):[1,1];const p2=$('pr2').value?$('pr2').value.split(',').map(Number):[1,1];args.priors=[p1,p2];return args}
+ const args={protected_window:$('pw').value,alice_calendar:+$('cal').value};if($('pr').value)args.prior=$('pr').value.split(',').map(Number);return args}
+function simMsg(){return $('pw2').value?'New simulation (fresh-observer model). Alice has two jointly protected windows ('+$('pw').value+' + '+$('pw2').value+'). Veil guards their combined pattern, not each margin alone.':'New simulation (fresh-observer model). Alice has one private window ('+$('pw').value+'). Ask about her availability.'}
+async function start(){$('log').textContent='';$('trace').textContent='';n=0;const args=startArgs();
+ if(!args){line('veil','Pick two different windows for joint protection.','veil no');return}
+ await call('veil_start_household',args,true);line('veil',simMsg(),'veil');await operator()}
+function setOpt(sel,val){if([...sel.options].some(o=>o.value===val))sel.value=val}
+function pv(p){return (p[0]===1&&p[1]===1)?'':p.join(',')}
+function syncSelects(sc){if(!sc)return;
+ if(typeof sc.alice_calendar==='number')setOpt($('cal'),String(sc.alice_calendar));
+ if(sc.protected_windows){setOpt($('pw'),sc.protected_windows[0]);setOpt($('pw2'),sc.protected_windows.length>1?sc.protected_windows[1]:'');
+  const dp=sc.declared_priors||{};const p1=dp[sc.protected_windows[0]];if(p1)setOpt($('pr'),pv(p1));
+  const p2=sc.protected_windows.length>1?dp[sc.protected_windows[1]]:null;setOpt($('pr2'),p2?pv(p2):'')}
+ else if(sc.protected_window){setOpt($('pw'),sc.protected_window);setOpt($('pw2'),'');if(sc.prior)setOpt($('pr'),pv(sc.prior))}}
+async function attachOrStart(){const args=startArgs();if(!args)return;args.only_if_uninitialized=true;let res;
+ try{res=await call('veil_start_household',args,true)}catch(e){res=null}
+ const r=res&&res.structuredContent;
+ if(r&&r.already_running===true){line('veil','Attached to the ongoing household. The room has already heard '+r.events+' answer(s); Veil\u2019s ledger still counts all of them. Starting over is an explicit operator action (below).','veil');syncSelects(await operator())}
+ else if(r&&res.isError===false){line('veil',simMsg(),'veil');await operator()}
+ else{line('veil','Could not confirm the household session state - the check may not have reached the server, so the session state is unknown. No automatic reset will be attempted. Retry re-checks first: it attaches if a session exists and starts one only if none does.','veil no');act(null,'> retry (checks first; attaches if a session exists)',attachOrStart)}}
+async function boot(){const i=await rpc('initialize',{protocolVersion:'2025-11-25',capabilities:{},clientInfo:{name:'simulated-voice-client',version:'0.1'}});await rpc('notifications/initialized',null,true);
+ for(let i=0;i<16;i++){const o=document.createElement('option');o.value=i;o.textContent='calendar '+i;o.selected=i===7;$('cal').append(o)}
+ for(const w of SLOT){const o=document.createElement('option');o.value=w;o.textContent=w;o.selected=w==='early prep';$('pw').append(o)}
+ for(const w of SLOT){const o=document.createElement('option');o.value=w;o.textContent=w;$('pw2').append(o)}
+ const tl=await rpc('tools/list');for(const q of ['is alice free for early prep','is alice free for late prep','is alice free for dinner','can alice cover exactly one of the two prep windows','find a shared window']){const b=document.createElement('button');b.className='link';b.textContent=q;b.onclick=()=>ask(q);$('sug').append(b)}
+ await attachOrStart();
+ const h=document.createElement('pre');h.className='h';h.textContent='initialize <- '+i.result.serverInfo.name+' (protocol '+i.result.protocolVersion+')   tools/list <- '+tl.result.tools.map(t=>t.name).join(', ');$('trace').append(h)}
+$('f').onsubmit=e=>{e.preventDefault();const v=$('t').value.trim();if(v){$('t').value='';ask(v)}};$('reset').onclick=start;
+boot();
+</script></html>
