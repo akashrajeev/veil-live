@@ -1,0 +1,20 @@
+{
+ "conversion": {
+  "all_day_events_in_range": 3,
+  "busy_intervals_in_range": 1,
+  "calendar_id": "in-public-holidays",
+  "coverage": {
+   "end": "2026-11-10T00:00:00+00:00",
+   "start": "2026-11-08T00:00:00+00:00"
+  },
+  "feed_timezone": "UTC",
+  "skipped_malformed_events": 0,
+  "skipped_recurring_events": 0,
+  "total_vevents": 565
+ },
+ "description": "Google public India holidays calendar, all-day VALUE=DATE events around 8-9 Nov 2026 (midnight-boundary handling)",
+ "fetched": "2026-10-16",
+ "license_note": "public schedule feed, factual timing data",
+ "name": "india-holidays-diwali-2026",
+ "source_url": "https://calendar.google.com/calendar/ical/en.indian%23holiday%40group.v.calendar.google.com/public/basic.ics"
+}
