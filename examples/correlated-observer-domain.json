@@ -1,0 +1,73 @@
+{
+  "worlds": [
+    {
+      "key": 37,
+      "alice": 2,
+      "bob": 5,
+      "secret": 0,
+      "weight": 1
+    },
+    {
+      "key": 53,
+      "alice": 3,
+      "bob": 5,
+      "secret": 1,
+      "weight": 1
+    },
+    {
+      "key": 101,
+      "alice": 6,
+      "bob": 5,
+      "secret": 0,
+      "weight": 1
+    },
+    {
+      "key": 117,
+      "alice": 7,
+      "bob": 5,
+      "secret": 1,
+      "weight": 1
+    },
+    {
+      "key": 165,
+      "alice": 10,
+      "bob": 5,
+      "secret": 0,
+      "weight": 1
+    },
+    {
+      "key": 181,
+      "alice": 11,
+      "bob": 5,
+      "secret": 1,
+      "weight": 1
+    },
+    {
+      "key": 229,
+      "alice": 14,
+      "bob": 5,
+      "secret": 0,
+      "weight": 1
+    },
+    {
+      "key": 245,
+      "alice": 15,
+      "bob": 5,
+      "secret": 1,
+      "weight": 1
+    }
+  ],
+  "actual_key": 117,
+  "requests": [
+    "parity",
+    "slot1",
+    "schedule"
+  ],
+  "budget": "0",
+  "public_costs": [
+    0,
+    1,
+    2,
+    3
+  ]
+}
