@@ -1,0 +1,20 @@
+{
+ "conversion": {
+  "all_day_events_in_range": 0,
+  "busy_intervals_in_range": 1,
+  "calendar_id": "f1-2026-calendar",
+  "coverage": {
+   "end": "2026-11-23T00:00:00+00:00",
+   "start": "2026-11-21T00:00:00+00:00"
+  },
+  "feed_timezone": "UTC",
+  "skipped_malformed_events": 0,
+  "skipped_recurring_events": 0,
+  "total_vevents": 23
+ },
+ "description": "F1 2026 real race calendar, Las Vegas GP 22 Nov 2026 04:00-06:00 UTC (boundary overlap on both edges)",
+ "fetched": "2026-10-16",
+ "license_note": "public schedule feed, factual timing data",
+ "name": "f1-las-vegas-2026",
+ "source_url": "https://f1calendar.com/download/f1-calendar_gp.ics"
+}
