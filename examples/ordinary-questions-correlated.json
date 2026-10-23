@@ -1,0 +1,45 @@
+{
+  "worlds": [
+    {
+      "key": 143,
+      "alice": 8,
+      "bob": 15,
+      "secret": 0,
+      "weight": 1
+    },
+    {
+      "key": 191,
+      "alice": 11,
+      "bob": 15,
+      "secret": 1,
+      "weight": 1
+    },
+    {
+      "key": 223,
+      "alice": 13,
+      "bob": 15,
+      "secret": 1,
+      "weight": 1
+    },
+    {
+      "key": 239,
+      "alice": 14,
+      "bob": 15,
+      "secret": 0,
+      "weight": 1
+    }
+  ],
+  "actual_key": 223,
+  "requests": [
+    "slot1",
+    "slot2",
+    "schedule"
+  ],
+  "budget": "0",
+  "public_costs": [
+    0,
+    1,
+    2,
+    3
+  ]
+}
