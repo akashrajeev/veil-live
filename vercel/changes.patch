@@ -1,0 +1,64 @@
+diff -ruN pa/alexa.html pb/alexa.html
+--- pa/alexa.html	2026-10-23 23:55:51.196829308 +0530
++++ pb/alexa.html	2026-10-23 23:55:51.199387461 +0530
+@@ -48,7 +48,7 @@
+ details.try{margin:6px 0 0;font-size:13px}details.try summary{cursor:pointer;text-decoration:underline}details.try ol{margin:6px 0 0;padding-left:18px}details.try li{margin:4px 0}
+ </style>
+ <header><div><h1>Veil &middot; simulated assistant</h1>
+-<p>A stand-in voice assistant talks to Veil's MCP server (<code>POST /mcp</code>, protocol 2025-11-25). It sees only what the room hears. The right-hand panels are operator instrumentation on a separate token-gated endpoint. Synthetic calendars; no Amazon service or device is involved.</p>
++<p>A stand-in voice assistant talks to Veil's MCP server (<code>POST /mcp</code>, protocol 2025-11-25). It sees only what the room hears. The right-hand panels are operator instrumentation on a separate token-gated endpoint. Synthetic calendars; no Amazon service or device is involved. Hosted demo: each browser's session lives in an encrypted cookie (stateless Vercel functions), not the local server's append-only ledger. Clearing or replaying an older cookie rolls back your own session, and two simultaneous actions may lose one update. Same model and code, different persistence; for trying the mechanism, not a production privacy guarantee.</p>
+ <details class="try"><summary>Try this in 3 minutes</summary>
+ <ol>
+ <li>Assumes the default scenario (protected window = early prep); press <b>new simulation</b> first if you changed the selects. Ask <b>is alice free for dinner</b>, then <b>is alice free for early prep</b>. The second is refused: the transcript so far would narrow the protected window. Watch the protected-window bits stay at 0 on the right while the calendar-identity bits move - the room learned something, just not the protected fact.</li>
+diff -ruN pa/index.html pb/index.html
+--- pa/index.html	2026-10-23 23:55:51.196809583 +0530
++++ pb/index.html	2026-10-23 23:55:51.199365498 +0530
+@@ -59,7 +59,7 @@
+ <details><summary>Inspect the synthetic fixture</summary><p>Windows: 0 early prep, 1 late prep, 2 dinner, 3 cleanup. Alice is free in 0, 1 and 2. Bob is free in 0 and 2. The observer does not start with Alice's actual calendar. As a demo operator, you can inspect it here; this is not an access-control boundary.</p><p>First question asks whether exactly one of Alice's two prep windows is free. That constraint is deliberately chosen to make the composition leak visible. It is not evidence of a common user request.</p></details>
+ <details id="lab"><summary>Try another synthetic scenario</summary><p>Explore the actual controller on other fictional calendars. Changing a public experiment budget is not private disclosure approval. These runs are separate synthetic experiments and do not reset a real conversation's history.</p><div class="labcontrols"><label>Scenario<select id="scenario"><option value="dinner">Dinner with a later safe window</option><option value="early-only">Only early prep is shared</option><option value="no-common">No shared window</option><option value="many-options">Several shared windows</option></select></label><label>Disclosure limit<select id="budget"><option value="strict">Zero probability shift</option><option value="quarter">Up to 0.25 shift</option><option value="open">Up to 0.5 shift (can reveal fact)</option></select></label><label>One fact to protect<select id="protectedslot"><option value="0">Alice free for early prep</option><option value="1">Alice free for late prep</option><option value="2">Alice free for dinner</option><option value="3">Alice free for cleanup</option></select></label><label>Public prior odds (false,true)<input id="priorodds" value="1,1" maxlength="8" aria-label="Two public prior odds weights false then true"></label><label>Public inconvenience costs<input id="publiccosts" value="0,1,2,3" maxlength="32" aria-label="Four public slot costs, comma separated"></label><label>Conversation<select id="script"><option value="composition">Prep questions, then schedule</option><option value="direct">Schedule directly</option></select></label></div><div class="labcontrols"><label>Alice calendar bitset (0-15)<input id="alicebits" type="number" min="0" max="15" placeholder="Use scenario default"></label><label>Bob calendar bitset (0-15)<input id="bobbits" type="number" min="0" max="15" placeholder="Use scenario default"></label></div><div id="calendarchecks" class="calendarChecks"></div><p class="label">Lab control choices are remembered locally in this browser, separately from guarded session history. Select time windows to populate the matching fictional calendar. Changing a scenario clears overrides; the bitset fields remain available for exact test cases.</p><p class="label">Prior odds are public model weights1..9 for false,true (1,3 starts at75% true). New dialogue sessions bind these public odds and costs; existing sessions keep their original configuration. Costs are public experiment inputs, not private resident preferences. Success count is optimized first, then total public inconvenience. Bitsets: 1 early prep, 2 late prep, 4 dinner, 8 cleanup. Add the values for free windows. Leave blank for the scenario defaults.</p><div class="actions"><button id="runlab">Run this experiment</button><button id="comparelab">Compare all limits</button><button id="downloadLab">Download experiment</button><button id="downloadAudit">Download guarded audit JSON</button></div><label>Supported request shortcut<select id="requestshortcut"><option value="">Choose or type a supported request</option><option>can alice cover exactly one of the two prep windows</option><option>is alice free for early prep</option><option>is alice free for late prep</option><option>is alice free for dinner</option><option>is alice free for cleanup</option><option>find a shared window</option></select></label><label>Preview a supported request<input id="intenttext" type="text" maxlength="240" placeholder="Alexa, find a time for us" style="width:100%"></label><div class="actions"><button id="previewintent">Preview guarded answer</button></div><div id="intentresult" class="label" aria-live="polite">Typed aliases only, not general language understanding. Preview does not change saved history.</div><div class="actions"><button id="startdialog">Start new synthetic dialogue</button><button id="askdialog">Ask and remember</button><button id="exportdialog">Export dialogue audit</button></div><p class="label">Operator view exposes synthetic configuration for inspection, not secure resident separation. Start uses the lab calendars, one protected fact and public limit. Ask records the supported typed request above in separate persistent history. Starting again is a new synthetic experiment, not production budget reset.</p><div id="dialogresult" class="labresults" aria-live="polite">No free-order dialogue loaded. This is an operator view, not a private resident interface.</div><div id="labresult" class="labresults" aria-live="polite">Choose a scenario to compare outcomes, disclosure and supported policies.</div><details><summary>Run an explicit synthetic world model</summary><p>Paste an experiment JSON matching examples/independent-dinner.json or correlated-observer-domain.json from the package. Fixed schema, at most256 worlds and32 typed requests. No code executes. You must declare the observer-conditioned prior; this simulator cannot establish that it is complete or reflects real life.</p><p class="label">The ordinary-query example uses a deliberately correlated four-world prior with cleanup always free. This is an illustrative model, not a discovered household pattern. The original independent-calendar comparison stays unchanged.</p><textarea id="experimentspec" maxlength="100000" aria-label="Synthetic experiment JSON" placeholder="Paste the complete JSON example"></textarea><div class="actions"><button id="loadordinary">Load ordinary-query example</button><button id="runspec">Run declared JSON</button><button id="downloadSpec">Download imported-run result</button></div><div id="specresult" class="labresults" aria-live="polite">No imported model run.</div></details><p class="label">Audit download contains all declared synthetic worlds and observer traces for offline verification, not private recipient data.</p></details>
+ <details><summary>Measured usefulness and limits</summary><p>Across all 256 equally weighted joint calendars, 175 have a common window. After this test conversation the guard schedules 112 of those 175, with no tested protected-fact probability shift. Direct guarded scheduling reaches 148. Refusal can happen even when a meeting exists.</p><p>One fact, one observer, declared finite prior. No private approvals, live Alexa access, natural-language parser, timing protection, collusion protection, encryption or secure multi-tenancy. Restarting this local server keeps the conversation ledger; reset deliberately starts a new synthetic experiment, not a way to reset real privacy history.</p><p>Background: <a href="https://arxiv.org/html/2605.09823v3">CalBench</a>, <a href="https://arxiv.org/html/2607.05318v1">PiSAs</a>, <a href="https://arxiv.org/html/2607.16710v1">inference-aware guidance</a>. Not a first-ever private scheduler claim.</p></details>
+-<footer>Local keyless prototype. No meetings are booked, messages sent, or accounts accessed.</footer></main>
++<footer>Local keyless prototype. No meetings are booked, messages sent, or accounts accessed. Hosted demo: each browser's session lives in an encrypted cookie (stateless Vercel functions), not the local server's append-only ledger. Clearing or replaying an older cookie rolls back your own session, and two simultaneous actions may lose one update. Same model and code, different persistence; for trying the mechanism, not a production privacy guarantee.</footer></main>
+ <script>
+ const questions={parity:'Can Alice cover exactly one of the two prep windows?',slot0:'Is Alice free for early prep?',slot2:'Is Alice free for dinner?',slot3:'Is Alice free for cleanup?',slot1:'Is Alice free for late prep?',schedule:'Find a shared dinner-planning window.'};
+ const names=['early prep','late prep','dinner','cleanup'];
+diff -ruN pa/mcp_server.py pb/mcp_server.py
+--- pa/mcp_server.py	2026-10-23 23:55:51.196712372 +0530
++++ pb/mcp_server.py	2026-10-23 23:55:51.199272837 +0530
+@@ -355,6 +355,7 @@
+         return {'scope': scope, 'approval_id': a['id'], 'status': 'pending',
+                 'spoken': 'I\'ve asked Alice. She may say no, and I can\'t tell you what she\'ll decide.'}
+     def _find(self, i):
++        self._status()  # stateless hosting: restore persisted approvals in a fresh process
+         if type(i) is not str:
+             raise ValueError('approval_id must be a string')
+         for a in self.approvals:
+@@ -504,6 +505,8 @@
+         return None  # a client response; nothing to do
+     if i is None:
+         return None  # notification (e.g. notifications/initialized)
++    try: session._status()  # stateless hosting: restore persisted approvals in a fresh process
++    except Exception: pass
+     if method == 'initialize':
+         want = (msg.get('params') or {}).get('protocolVersion')
+         ver = want if want in SUPPORTED else PROTOCOL
+diff -ruN pa/veil_main.py pb/veil_main.py
+--- pa/veil_main.py	2026-10-23 23:55:51.196788580 +0530
++++ pb/veil_main.py	2026-10-23 23:55:51.199345411 +0530
+@@ -24,9 +24,14 @@
+ STORE.mkdir(exist_ok=True)
+ LOCK = threading.Lock()
+ MCP = mcp_server.Session(STORE / 'mcp-dialog.json')
+-SESSIONS=set()  # Mcp-Session-Id values issued by this process (assistant surface)
++class _Sess(set):
++    # stateless hosting: accept any well-formed 32-hex session id (no cross-request memory)
++    def __contains__(self,x):
++        import re
++        return isinstance(x,str) and re.fullmatch(r'[0-9a-f]{32}',x) is not None
++SESSIONS=_Sess()  # Mcp-Session-Id values issued by this process (assistant surface)
+ KNOWN_PROTOCOLS=('2025-03-26','2025-06-18','2025-11-25')
+-OPERATOR_TOKEN = uuid.uuid4().hex  # demo-only: embedded in the served /alexa page, new each server start
++OPERATOR_TOKEN = os.environ.get('VEIL_OPERATOR_TOKEN') or uuid.uuid4().hex  # demo-only: embedded in the served /alexa page, new each server start
+ WORLDS = make_worlds()
+ MODEL = hashlib.sha256(json.dumps([asdict(w) for w in WORLDS], sort_keys=True).encode()).hexdigest()
+ ACTUAL = next(w for w in WORLDS if w.key == 117)
